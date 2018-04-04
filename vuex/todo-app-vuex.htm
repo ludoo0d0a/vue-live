@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>Vue.js Todo List App with Vuex - Sabe.io</title>
+    <link rel="shortcut icon" href="/images/favicons/favicon.ico" />
+    <meta name="author" content="Sabe.io" />
+    <meta name="description" content="This Vue.js app uses Vuex to manage the state for a simple todo list app." />
+    <meta name="application-name" content="Sabe.io" />
+    <meta name="theme-color" content="#000000" />
+</head>
+
+<body class="light">
+    <main>
+        <style>
+            html {
+                font-family: sans-serif;
+                background: linear-gradient(45deg, #6cfd9f, #6887ff);
+                height: 100%;
+                color: #333;
+            }
+
+            body {
+                display: flex;
+                height: 100%;
+                margin: 0;
+            }
+
+            main {
+                width: 100%;
+                display: flex;
+                align-items: center;
+            }
+
+            .container {
+                width: 24rem;
+                margin: auto;
+                background-color: white;
+                border-radius: 0.5rem;
+                padding: 1rem;
+                box-shadow: 0 0 2rem rgba(0, 0, 0, 0.25);
+            }
+
+            h1 {
+                text-align: center;
+                margin-top: 0;
+            }
+
+            .todo-input {
+                width: 100%;
+                padding: 0.5rem;
+                font-size: 1rem;
+                outline: none;
+                border-radius: 0.25rem;
+                border-style: none;
+                border: solid 1px lightgray;
+                box-sizing: border-box;
+            }
+
+            .tasks {
+                padding-left: 1.5rem;
+            }
+
+            .task {
+                margin-bottom: 0.5rem;
+            }
+
+            .task:hover {
+                cursor: pointer;
+            }
+
+            .completed {
+                text-decoration: line-through;
+                color: #555;
+            }
+        </style>
+        <div class="container">
+            <h1>Todo List</h1>
+            <div id="app"></div>
+        </div>
+        <template id="todo-list">
+            <ul class="tasks">
+                <li v-for="todo in todos" :class="{completed: todo.completed}" class="task" @click="toggleTodo(todo.id)" @dblclick="deleteTodo(todo.id)">{{todo.task}}</li>
+            </ul>
+        </template>
+        <template id="app-template">
+            <div>
+                <form @submit.prevent="addTodo">
+                    <input class="todo-input" type="text" placeholder="Enter a new Task" v-model="task" />
+                </form>
+                <todo-list :todos="todos"></todo-list>
+            </div>
+        </template>
+        <script src="https://unpkg.com/vue"></script>
+        <script src="https://unpkg.com/vuex"></script>
+        <script>
+            var state = {
+                todos: [
+                    {
+                        id: 0,
+                        task: "Buy food at the supermarket.",
+                        completed: false
+                    },
+                    {
+                        id: 1,
+                        task: "Organize the living room.",
+                        completed: true
+                    },
+                    {
+                        id: 2,
+                        task: "Read every class and tutorial on Sabe.io.",
+                        completed: false
+                    }
+                ]
+            };
+
+            var getters = {
+                getTodos: state => state.todos
+            };
+
+            var mutations = {
+                ADD_TODO: (state, payload) => {
+
+                    var newTask = {
+                        id: payload.newId,
+                        task: payload.task,
+                        completed: false
+                    }
+
+                    state.todos.unshift(newTask);
+                },
+                TOGGLE_TODO: (state, payload) => {
+                    var item = state.todos.find(todo => todo.id === payload);
+                    item.completed = !item.completed;
+                },
+                DELETE_TODO: (state, payload) => {
+                    var index = state.todos.findIndex(todo => todo.id === payload);
+                    state.todos.splice(index, 1);
+                }
+            };
+
+
+            var actions = {
+                addTodo: (context, payload) => {
+                    context.commit("ADD_TODO", payload)
+                },
+                toggleTodo: (context, payload) => {
+                    context.commit("TOGGLE_TODO", payload)
+                },
+                deleteTodo: (context, payload) => {
+                    context.commit("DELETE_TODO", payload)
+                }
+            }
+
+            var store = new Vuex.Store({
+                state,
+                getters,
+                mutations,
+                actions
+                //,plugins
+                //,modules
+            });
+
+            Vue.component("todo-list", {
+                props: ["todos"],
+                methods: {
+                    toggleTodo: function (id) {
+                        this.$store.dispatch("toggleTodo", id);
+                    },
+                    deleteTodo: function (id) {
+                        this.$store.dispatch("deleteTodo", id);
+                    }
+                },
+                template: "#todo-list"
+            });
+            // import Vuex from 'vuex'
+            // Vue.use(Vuex)
+            var app = new Vue({
+                data: () => ({
+                    task: "",
+                    newId: 3
+                }),
+                computed: {
+                    todos: function () {
+                        return this.$store.getters.getTodos;
+                    }
+                },
+                methods: {
+                    addTodo: function () {
+                        this.$store.dispatch("addTodo", this);
+                        this.newId++;
+                        this.task = "";
+                    }
+                },
+                store: store,
+                el: "#app",
+                template: "#app-template"
+            });
+        </script>
+    </main>
+</body>
+</html>
