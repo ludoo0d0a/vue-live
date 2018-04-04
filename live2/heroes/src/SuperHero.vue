@@ -6,8 +6,6 @@
 </template>
 
 <script>
-const mydir = require.context('./assets', true);
-
 export default {
     data() {
         return {
