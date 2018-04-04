@@ -6,6 +6,8 @@
 </template>
 
 <script>
+const mydir = require.context('./assets', true);
+
 export default {
     data() {
         return {
@@ -18,7 +20,6 @@ export default {
             return this.name.replace(/\W/g, '');
         },
         heoroimg: function(){
-            // const dir = require.context('./assets/', true);
             return __webpack_public_path__ + this.name.replace(/\W/g, '') + '.png';
         }
     }
