@@ -1,5 +1,8 @@
 <template>
   <div>
+        <section>
+          <img class="logo" src="./assets/heroes.png"/>
+        </section>
         <ul>
             <li v-for="hero in heroes" :key="hero">
               <super-hero :name="hero"/>
@@ -32,14 +35,28 @@ export default {
 
 <style>
 .superman{
-  background-color: red;
+  background-color: rgb(38, 38, 165);
 }
 
 .hulk {
   background-color: green;
 }
 
-.sponge_bob {
+.spongebob {
   background-color: yellow;
+}
+
+.ironman {
+  background-color: red;
+}
+
+ul, li{
+  list-style: none
+}
+li .hero{
+  padding: 5px
+}
+.logo{
+  max-height: 200px;
 }
 </style>

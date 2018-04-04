@@ -1,6 +1,7 @@
 <template lang="pug">
   div.hero(:class="herocls")
     span.logo
+        img(:src="heoroimg")
     p My name is {{heroname}}
 </template>
 
@@ -8,15 +9,24 @@
 export default {
     data() {
         return {
-            heroname: this.name
+            heroname: this.name,
         }
     },
     props: [ 'name' ],
     computed: {
         herocls: function(){
-            return this.name.replace(/\W/g, '_');
+            return this.name.replace(/\W/g, '');
+        },
+        heoroimg: function(){
+            // const dir = require.context('./assets/', true);
+            return __webpack_public_path__ + this.name.replace(/\W/g, '') + '.png';
         }
     }
 }
 </script>
 
+<style>
+.hero img{
+    max-height: 150px;
+}
+</style>
